@@ -30,4 +30,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation files('libs/uhf_lib.jar')
     implementation files('libs/SDK_release_v2.1.1.jar')
+    implementation 'com.loopj.android:android-async-http:1.4.9'
 }

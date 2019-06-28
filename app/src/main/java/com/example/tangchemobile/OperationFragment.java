@@ -13,7 +13,14 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.tangchemobile.services.config;
+
+import java.util.Map;
 
 
 /**
@@ -73,8 +80,33 @@ public class OperationFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_operation, container, false);
 
-        MainActivity activity = (MainActivity)v.getContext();
-        this.InitDevice(activity);
+        this.initView(v);
+
+        final MainActivity activity = (MainActivity)v.getContext();
+
+        if (!init) {
+            this.InitDevice(activity);
+            init = true;
+        }
+
+        // 点击扫码按钮
+        this.btnScan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                boolean scan = pressScan();
+                if (scan) {
+                    btnScan.setText("停止");
+                    if(!activity.GetScanner().Start()) {
+                        Toast.makeText(activity, "无法开始扫码", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    btnScan.setText("开始扫码");
+                    if(!activity.GetScanner().Stop()) {
+                        Toast.makeText(activity, "无法停止扫码", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
 
         return v;
     }
@@ -86,8 +118,11 @@ public class OperationFragment extends Fragment {
     }
 
     public void InitDevice(MainActivity ctx) {
+        Map<String, String> cfg = config.Load(ctx);
+
         // 加载扫码
         ctx.GetScanner().Open();
+        ctx.GetScanner().SetContinueMode(Boolean.parseBoolean(cfg.get(config.SCANNER_CONTINUE_MODE)));
 
         IntentFilter filter = new IntentFilter();
         filter.addAction("scan.rcv.message");
@@ -100,6 +135,7 @@ public class OperationFragment extends Fragment {
         // 加载rfid
 
         // 加载rush
+        ctx.Rush().SetUrl(cfg.get(config.RUSH_URL));
     }
 
 
@@ -156,7 +192,36 @@ public class OperationFragment extends Fragment {
             String barcodeStr = new String(barocode, 0, barocodelen);
 
             Toast.makeText(context.getApplicationContext(), barcodeStr, Toast.LENGTH_SHORT).show();
+            txtSrc.setText("扫码");
+            txtValue.setText(barcodeStr);
+
+            final MainActivity activity = (MainActivity)context.getApplicationContext();
+            if (!activity.GetScanner().IsContinueMode()) {
+                pressScan();
+            }
+
+            // 推送rush
+            activity.Rush().Put("scanner", barcodeStr);
         }
     };
+
+    private void initView(View v) {
+        this.btnScan = v.findViewById(R.id.btnScan);
+        this.txtSrc = v.findViewById(R.id.txtSrc);
+        this.txtValue = v.findViewById(R.id.txtValue);
+    }
+
+    private boolean pressScan() {
+        scanStart = !scanStart;
+        return scanStart;
+    }
+
+    private static boolean init = false;
+    private static boolean scanStart = false;
+
+    private Button btnScan;
+    private TextView txtSrc;
+    private TextView txtValue;
+
 
 }

@@ -154,6 +154,8 @@ public class SettingFragment extends Fragment  {
 
                 if (config.Save(view.getContext(), cfg)) {
                     Toast.makeText(view.getContext(), "保存成功", Toast.LENGTH_SHORT).show();
+                    MainActivity activity = (MainActivity)view.getContext();
+                    activity.operationFragment.InitDevice(activity);
                 }
             }
         });

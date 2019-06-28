@@ -11,6 +11,7 @@ import android.widget.Toast;
 public class Scanner {
     private Context parent;
     private ScanDevice dev;
+    private Boolean continueMode = false;
 
     public Scanner(Context parent) {
         this.parent = parent;
@@ -69,6 +70,12 @@ public class Scanner {
             this.dev.setScanLaserMode(8);
         }
 
+        this.continueMode = flag;
+
         return true;
+    }
+
+    public boolean IsContinueMode() {
+        return this.continueMode;
     }
 }
