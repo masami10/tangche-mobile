@@ -4,6 +4,7 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 
+import com.example.tangchemobile.services.Rfid;
 import com.example.tangchemobile.services.Rush;
 import com.example.tangchemobile.services.Scanner;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements OperationFragment
         this.getSupportFragmentManager().beginTransaction().add(R.id.flContent,new OperationFragment()).commit();
         this.scanner = new Scanner(this.getApplicationContext());
         this.rush = new Rush(this.getApplicationContext());
+        this.rfid = new Rfid(this.getApplicationContext());
         this.operationFragment = new OperationFragment();
         this.settingFragment = new SettingFragment();
     }
@@ -68,9 +70,13 @@ public class MainActivity extends AppCompatActivity implements OperationFragment
         return this.rush;
     }
 
+    public Rfid Rfid() {
+        return this.rfid;
+    }
+
     private Scanner scanner;
     private Rush rush;
-
+    private Rfid rfid;
 
     public OperationFragment operationFragment;
     public SettingFragment settingFragment;

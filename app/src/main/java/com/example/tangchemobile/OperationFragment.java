@@ -133,6 +133,11 @@ public class OperationFragment extends Fragment {
         ctx.registerReceiver(this.GetReceiver(), filter);
 
         // 加载rfid
+        ctx.Rfid().SetPower(Integer.parseInt(cfg.get(config.RFID_POWER_INDEX)));
+        ctx.Rfid().SetSensitive(Integer.parseInt(cfg.get(config.RFID_SENSITIVE_INDEX)));
+        if (!ctx.Rfid().Open(cfg.get(config.RFID_PORT))) {
+            Toast.makeText(ctx, "初始化RFID失败", Toast.LENGTH_SHORT).show();
+        }
 
         // 加载rush
         ctx.Rush().SetUrl(cfg.get(config.RUSH_URL));
@@ -214,6 +219,11 @@ public class OperationFragment extends Fragment {
     private boolean pressScan() {
         scanStart = !scanStart;
         return scanStart;
+    }
+
+    public void SetInfo(String src, String value) {
+        this.txtSrc.setText(src);
+        this.txtValue.setText(value);
     }
 
     private static boolean init = false;
